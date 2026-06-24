@@ -6,17 +6,14 @@ class LeakyReLU:
         self.alpha = alpha
 
     def forward(self, x):
-        # m = np.maximum(x, 0)
-        # return m + -self.alpha*np.multiply(m==0, x)
         return np.where(x > 0, x, self.alpha * x)
     def deriv(self, x):
         return np.where(x > 0, 1.0, self.alpha)
-        # return (x<=0)*self.alpha + x>0
 
 class Linear:
     def __init__(self, in_features, n_neurons, activation=None):
-        self.ws: np.matrix = np.random.randn(n_neurons, in_features) * np.sqrt(2.0/in_features)# [n_neurons, in_n]
-        self.bias: np.matrix = np.zeros((n_neurons, 1))
+        self.ws: np.matrix = np.random.randn(n_neurons, in_features) * np.sqrt(2.0/in_features) # [n_neurons, in_n]
+        self.bias: np.matrix = np.zeros((n_neurons, 1)) # [n_neurons, 1]
         self.activation = activation
     
     def set_activation(self, act):
@@ -31,13 +28,13 @@ class Linear:
         self.inp = x
         self.z = np.matmul(x, self.ws.T) + self.bias.T # [N, n_neurons]
         
-        # self.z = z
         if self.activation:
             return self.activation.forward(self.z)
         return self.z
     
     def grads(self, d_y: np.matrix):
-        # d_y is of size [N, n_neurons]
+        # Assume d_y is of size [N, n_neurons]
+
         if self.activation:
             d_y = np.multiply(d_y, self.activation.deriv(self.z))
 
@@ -134,7 +131,6 @@ class MLP:
             for (dW, dB),l in zip(self.grads, self.layers):
                 l.ws = l.ws - dW*0.005
                 l.bias = l.bias - dB*0.005
-        
         
 
 # Test
